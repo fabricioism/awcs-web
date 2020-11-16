@@ -1,6 +1,6 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import { Button } from "@chakra-ui/core";
+import { Button } from "antd";
 
 export default function Home() {
   return (
@@ -12,9 +12,9 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Bienvenido a <a href="https://nextjs.org">Next.js!</a>
+          Welcome To <a href="https://nextjs.org">Next.js!</a>
         </h1>
-        <Button variantColor="green">Botón</Button>
+        <Button type="primary">Primary Button</Button>
 
         <p className={styles.description}>
           Get started by editing{" "}
