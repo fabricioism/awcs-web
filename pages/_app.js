@@ -1,15 +1,8 @@
 import "../styles/globals.css";
-import { ThemeProvider, CSSReset } from "@chakra-ui/core";
+import "antd/dist/antd.css";
 
 function MyApp({ Component, pageProps }) {
-  return (
-    <>
-      <ThemeProvider>
-        <CSSReset />
-        {<Component {...pageProps} />}
-      </ThemeProvider>
-    </>
-  );
+  return <Component {...pageProps} />;
 }
 
 export default MyApp;

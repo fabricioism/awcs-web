@@ -1,0 +1,44 @@
+.loginText {
+  padding: 50px 0px;
+}
+
+.sifColContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 75vh;
+}
+
+.sifColContainerLogin {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 75vh;
+  padding: 3%;
+}
+.sifWelcomeText {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 60px;
+  line-height: 58px;
+  display: flex;
+  align-items: center;
+}
+
+.sifWelcomeTextDark {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 60px;
+  line-height: 58px;
+  display: flex;
+  align-items: center;
+  color: #f5f5f6;
+}
+
+@media (max-width: 1023px) {
+  .sifColContainerLogin {
+    margin-top: 22px;
+  }
+}

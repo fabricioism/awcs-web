@@ -1,0 +1,31 @@
+.loginForm {
+  max-width: 600px;
+}
+.loginFormForgot {
+  float: right;
+}
+.ant-col-rtl .loginFormForgot {
+  float: left;
+}
+.loginFormButton {
+  width: 100%;
+}
+
+.lifCard {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  border-style: solid;
+  border-width: 1px !important;
+  border-color: #dadada;
+  width: 40vw;
+}
+
+.loginTitleForm {
+  margin-right: auto;
+  text-align: left;
+  padding: 0px 130px;
+}
