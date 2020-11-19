@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { Form, Input, Button, Typography } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import styles from "./loginForm.module.css";
@@ -6,11 +7,12 @@ import axios from "axios";
 const { Title } = Typography;
 
 const LoginForm = () => {
+  const router = useRouter();
   const onFinish = async (values) => {
     const URL = `${process.env.NEXT_PUBLIC_API_URL}auth/local`;
     try {
       const { data } = await axios.post(URL, values);
-      console.log("data", data);
+      router.push("/");
     } catch (error) {
       console.log("error", error.response);
     }
