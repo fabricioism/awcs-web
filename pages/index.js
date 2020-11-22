@@ -1,18 +1,17 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
+import { HomeView } from "../components/views";
 import { PrivateRoute } from "../components/routing";
-import jwtDecode from "jwt-decode";
 
 export default function Home() {
   return (
     <PrivateRoute>
-      <div className={styles.container}>
-        <Head>
-          <title>Create Next App</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-
-        <main className={styles.main}>
+      <Head>
+        <title>Create Next App</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <HomeView />
+      {/* <main className={styles.main}>
           <h1 className={styles.title}>Bienvenido a Next.js!</h1>
 
           <p className={styles.description}>
@@ -60,8 +59,7 @@ export default function Home() {
             Powered by{" "}
             <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
           </a>
-        </footer>
-      </div>
+        </footer> */}
     </PrivateRoute>
   );
 }

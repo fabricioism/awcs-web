@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { Form, Input, Button, Typography, notification } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { NotificationLogin } from "../../atoms";
 import styles from "./loginForm.module.css";
 import axios from "axios";
@@ -45,18 +44,13 @@ const LoginForm = () => {
           name="identifier"
           rules={[{ required: true, message: "Ingrese su e-mail" }]}
         >
-          <Input
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="Correo electrónico"
-            style={{ width: 300 }}
-          />
+          <Input placeholder="Correo electrónico" style={{ width: 300 }} />
         </Form.Item>
         <Form.Item
           name="password"
           rules={[{ required: true, message: "Ingrese su contraseña" }]}
         >
-          <Input
-            prefix={<LockOutlined className="site-form-item-icon" />}
+          <Input.Password
             type="password"
             placeholder="Contraseña"
             style={{ width: 300 }}
