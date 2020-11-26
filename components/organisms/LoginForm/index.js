@@ -17,6 +17,7 @@ const LoginForm = () => {
       const { data } = await axios.post(URL, values);
       localStorage.setItem("jwt", data.jwt);
       localStorage.setItem("loggedIn", true);
+      localStorage.setItem("userName", data.user.name);
       router.push("/");
     } catch (error) {
       setloginError(true);
