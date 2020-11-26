@@ -80,7 +80,7 @@ const productos = () => {
   const search = {
     enabled: true,
     server: {
-      url: (prev, keyword) => `${prev}&product.Name_contains=${keyword}`,
+      url: (prev, keyword) => `${prev}&Name_contains=${keyword}`,
       headers: generateHeaders("auth", { token: getJWT() }),
       method: "GET",
     },
