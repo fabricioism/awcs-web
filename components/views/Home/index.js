@@ -24,13 +24,15 @@ const Home = () => {
               <Image
                 width={200}
                 height={200}
-                src={`${process.env.NEXT_PUBLIC_API_URL}uploads/bicicleta_e06b5a6668.svg`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/bicicleta_e06b5a6668.svg`}
                 preview={false}
               />
               <Title level={4} strong={true} className={styles.subTitle}>
                 Gestión de productos
               </Title>
-              <Button type="primary">Ir</Button>
+              <Button type="primary" style={{ width: "150px" }}>
+                Ir
+              </Button>
             </div>
           </Col>
           <Col span={12}>
@@ -38,13 +40,15 @@ const Home = () => {
               <Image
                 width={200}
                 height={180}
-                src={`${process.env.NEXT_PUBLIC_API_URL}uploads/humano_3801190ba1.svg`}
+                src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/humano_3801190ba1.svg`}
                 preview={false}
               />
               <Title level={4} strong={true} className={styles.subTitle}>
                 Gestión de recursos humanos
               </Title>
-              <Button type="primary">Ir</Button>
+              <Button type="primary" style={{ width: "150px" }}>
+                Ir
+              </Button>
             </div>
           </Col>
         </Row>

@@ -24,7 +24,7 @@ const NavBar = () => {
             <Image
               width={40}
               height={40}
-              src={`${process.env.NEXT_PUBLIC_API_URL}uploads/logo_b71473f73a.jpg`}
+              src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/logo_b71473f73a.jpg`}
               preview={false}
             />
           </a>

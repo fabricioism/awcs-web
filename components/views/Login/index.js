@@ -13,7 +13,7 @@ const Login = () => {
           <Image
             width={300}
             height={130}
-            src={`${process.env.NEXT_PUBLIC_API_URL}uploads/logo_b71473f73a.jpg`}
+            src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/logo_b71473f73a.jpg`}
             preview={false}
           />
           <Title level={2} className={styles.loginText}>

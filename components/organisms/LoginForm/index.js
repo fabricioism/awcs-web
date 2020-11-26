@@ -12,7 +12,7 @@ const LoginForm = () => {
   const router = useRouter();
 
   const onFinish = async (values) => {
-    const URL = `${process.env.NEXT_PUBLIC_API_URL}auth/local`;
+    const URL = `${process.env.NEXT_PUBLIC_API_URL}/auth/local`;
     try {
       const { data } = await axios.post(URL, values);
       localStorage.setItem("jwt", data.jwt);
