@@ -11,7 +11,7 @@ import { PrivateRoute } from "../../components/routing";
 
 const productos = () => {
   const [visibleProductDetail, setvisibleProductDetail] = useState(false);
-  const [currentProduct, setcurrentProduct] = useState(-1);
+  const [currentProduct, setcurrentProduct] = useState(null);
 
   const openProductDetail = (id) => {
     setcurrentProduct(id);
@@ -55,7 +55,7 @@ const productos = () => {
   };
 
   const server = {
-    url: `${process.env.NEXT_PUBLIC_API_URL}/products?_sort=updated_at:desc`,
+    url: `${process.env.NEXT_PUBLIC_API_URL}/products?_sort=id:asc`,
     headers: generateHeaders("auth", {
       token: getJWT(),
     }),
