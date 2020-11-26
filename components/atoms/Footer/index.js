@@ -5,7 +5,7 @@ const { Footer: AntFooter } = Layout;
 
 const Footer = () => {
   return (
-    <AntFooter>
+    <AntFooter style={{ position: "fixed", bottom: "0", width: "100%" }}>
       <Row style={{ width: "100%" }}>
         <Col style={{ width: "100%" }}>
           <Row className={styles.justifyContent}>
