@@ -84,7 +84,10 @@ const EmployeeDetail = ({ id }) => {
       </p>
       <Row>
         <Col span={12}>
-          <DescriptionItem title="Cargo" content={`${response?.JobTitle}`} />
+          <DescriptionItem
+            title="Cargo que desempeña"
+            content={`${response?.JobTitle}`}
+          />
         </Col>
         <Col span={12}>
           <DescriptionItem
