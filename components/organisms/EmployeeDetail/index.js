@@ -4,13 +4,13 @@ import { Col, Divider, Row } from "antd";
 import styles from "./employeeDetail.module.css";
 
 const EmployeeDetail = ({ id }) => {
-  console.log("id desde detail", id);
-
   const { response, isLoading } = useFetch(
     `${process.env.NEXT_PUBLIC_API_URL}/employees/${id}`,
     {
       method: "GET",
-    }
+    },
+    true,
+    [id]
   );
 
   const DescriptionItem = ({ title, content }) => (
