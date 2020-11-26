@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Layout as AntLayout, Menu, Image, Dropdown } from "antd";
 import { NavBar } from "../molecules";
 import { Footer } from "../atoms";
@@ -28,7 +29,7 @@ const Layout = ({ children }) => {
             style={{ display: "flex" }}
             theme="light"
             mode="horizontal"
-            defaultSelectedKeys={["2"]}
+            defaultSelectedKeys={["1"]}
           >
             <Menu.Item key="1">
               <Link href="/">
@@ -42,8 +43,16 @@ const Layout = ({ children }) => {
                 </a>
               </Link>
             </Menu.Item>
-            <Menu.Item key="2">Productos</Menu.Item>
-            <Menu.Item key="3">Recursos Humanos</Menu.Item>
+            <Menu.Item key="2">
+              <Link href="/productos">
+                <a>Productos</a>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <Link href="/rrhh">
+                <a>Recursos Humanos</a>
+              </Link>
+            </Menu.Item>
             <div>
               <Dropdown overlay={User} trigger={["click"]}>
                 <a
