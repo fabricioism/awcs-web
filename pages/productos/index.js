@@ -7,6 +7,7 @@ import { useFetch } from "../../commons/useFetch";
 import { isBrowser } from "../../commons/isBrowser";
 import { generateHeaders } from "../../commons/fetchFunctions";
 import { Button, Drawer } from "antd";
+import { PrivateRoute } from "../../components/routing";
 
 const productos = () => {
   const [visibleProductDetail, setvisibleProductDetail] = useState(false);
@@ -100,42 +101,44 @@ const productos = () => {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Table
-          columns={[
-            "Número de Producto",
-            "Nombre",
-            "Stock de seguridad",
-            "Punto de pedido",
-            "Acciones",
-          ]}
-          server={server}
-          search={search}
-          isServer
-          sort={true}
-          pagination={pagination}
-          width={
-            width <= 411
-              ? width * 0.5
-              : width > 411 && width <= 768
-              ? width * 0.75
-              : width > 768 && width < 1280
-              ? width * 0.8
-              : width >= 1280 && width < 1400
-              ? width * 0.85
-              : width * 0.85
-          }
-        />
-        <Drawer
-          title="Detalle del Producto"
-          width={"50%"}
-          onClose={onCloseProductDetail}
-          visible={visibleProductDetail}
-          bodyStyle={{ paddingBottom: 80 }}
-        >
-          <ProductDetail id={currentProduct} />
-        </Drawer>
-      </div>
+      <PrivateRoute>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Table
+            columns={[
+              "Número de Producto",
+              "Nombre",
+              "Stock de seguridad",
+              "Punto de pedido",
+              "Acciones",
+            ]}
+            server={server}
+            search={search}
+            isServer
+            sort={true}
+            pagination={pagination}
+            width={
+              width <= 411
+                ? width * 0.5
+                : width > 411 && width <= 768
+                ? width * 0.75
+                : width > 768 && width < 1280
+                ? width * 0.8
+                : width >= 1280 && width < 1400
+                ? width * 0.85
+                : width * 0.85
+            }
+          />
+          <Drawer
+            title="Detalle del Producto"
+            width={"50%"}
+            onClose={onCloseProductDetail}
+            visible={visibleProductDetail}
+            bodyStyle={{ paddingBottom: 80 }}
+          >
+            <ProductDetail id={currentProduct} />
+          </Drawer>
+        </div>
+      </PrivateRoute>
     </>
   );
 };

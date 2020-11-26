@@ -28,11 +28,18 @@ const Layout = ({ children }) => {
 
   const isLoggedIn = getIsLoggedIn();
 
+  const getUserName = () => {
+    if (isBrowser() && localStorage.getItem("userName")) {
+      return localStorage.getItem("userName");
+    }
+  };
+
+  const userName = getUserName();
+
   const User = () => {
     return (
       <Menu>
-        <Menu.Item key="0">Mi perfil</Menu.Item>
-        <Menu.Item key="1">
+        <Menu.Item key="0">
           <Button
             style={{ justifyContent: "left" }}
             type="text"
@@ -87,7 +94,7 @@ const Layout = ({ children }) => {
                     onClick={(e) => e.preventDefault()}
                     style={{ color: "black" }}
                   >
-                    Hola Juan Carlos <DownOutlined />
+                    {`${userName}`} <DownOutlined />
                   </a>
                 </Dropdown>
               </div>
