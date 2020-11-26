@@ -11,13 +11,11 @@ import { PrivateRoute } from "../../components/routing";
 
 const rrhh = () => {
   const [visibleEmployeeDetail, setvisibleEmployeeDetail] = useState(false);
-  const [CurrentEmployee, setCurrentEmployee] = useState(-1);
+  const [CurrentEmployee, setCurrentEmployee] = useState(null);
 
   const openEmployeeDetail = (id) => {
-    console.log("id", id);
     setCurrentEmployee(id);
     setvisibleEmployeeDetail(true);
-    console.log("CurrentEmployee", CurrentEmployee);
   };
 
   const onCloseEmployeeDetail = () => {
@@ -57,7 +55,7 @@ const rrhh = () => {
   };
 
   const server = {
-    url: `${process.env.NEXT_PUBLIC_API_URL}/employees?_sort=updated_at:desc`,
+    url: `${process.env.NEXT_PUBLIC_API_URL}/employees?_sort=id:asc`,
     headers: generateHeaders("auth", {
       token: getJWT(),
     }),
