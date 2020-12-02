@@ -16,7 +16,6 @@ import axios from "axios";
 
 const ProductForm = () => {
   const onFinish = async (values) => {
-    await getSubAndCategory();
     const URL = `${process.env.NEXT_PUBLIC_API_URL}/products`;
     const jwt = getJWT();
     const headers = {
