@@ -1,27 +1,53 @@
 import React, { useState } from "react";
 import { _ as lodash } from "gridjs-react";
 import { Table } from "../../components/molecules";
-import { ProductDetail } from "../../components/organisms";
+import { ProductDetail, ProductForm } from "../../components/organisms";
 import { useWindowDimensions } from "../../commons/useWindowDimensions";
 import { useFetch } from "../../commons/useFetch";
 import { isBrowser } from "../../commons/isBrowser";
 import { generateHeaders } from "../../commons/fetchFunctions";
 import { Button, Drawer } from "antd";
 import { PrivateRoute } from "../../components/routing";
+import { PlusOutlined } from "@ant-design/icons";
 
 const productos = () => {
+  /** Variables de estado para la visualizacion de un registro */
   const [visibleProductDetail, setvisibleProductDetail] = useState(false);
   const [currentProduct, setcurrentProduct] = useState(null);
 
+  /** Variables de estado para la creacion de un registro */
+  const [visibleProductCreate, setvisibleProductCreate] = useState(false);
+
+  /** INICIO -- FUNCIONES DE VISUALIZACION  DE LOS REGISTROS */
+
+  /** Funcion que acciona el drawer de visualizacion del registro */
   const openProductDetail = (id) => {
     setcurrentProduct(id);
     setvisibleProductDetail(true);
   };
 
+  /** Funcion de accion para cerrar el drawer de visualizacion de los registros */
   const onCloseProductDetail = () => {
     setvisibleProductDetail(false);
   };
 
+  /** FIN -- FUNCIONES DE VISUALIZACION DE LOS REGISTROS */
+
+  /***** INICIO -- FUNCIONES DE CREACION DE UN REGISTRO ****/
+
+  /** Funcion que acciona el drawer de creacion de registro */
+  const openProductCreate = () => {
+    setvisibleProductCreate(true);
+  };
+
+  /** Funcion de accion para cerrar el drawer de creacion de registro */
+  const onCloseProductCreate = () => {
+    setvisibleProductCreate(false);
+  };
+
+  /** FIN -- FUNCIONES DE CREACION DE UN REGISTRO */
+
+  /** Obteniendo el JWT del usuario */
   const getJWT = () => {
     if (isBrowser() && localStorage.getItem("jwt")) {
       const jwt = localStorage.getItem("jwt");
@@ -29,6 +55,7 @@ const productos = () => {
     }
   };
 
+  /** Obteniendo el tamaño de la pantalla y el numero de registros en la tabla */
   const { width } = useWindowDimensions();
   const { response, isLoading } = useFetch(
     `${process.env.NEXT_PUBLIC_API_URL}/products/count`,
@@ -37,6 +64,7 @@ const productos = () => {
     }
   );
 
+  /** Crear las acciones en lo botones de la tabla */
   const actionsCreator = ({ id }) => {
     return (
       <div
@@ -54,6 +82,7 @@ const productos = () => {
     );
   };
 
+  /** Halando la data que va en la tabla */
   const server = {
     url: `${process.env.NEXT_PUBLIC_API_URL}/products?_sort=id:asc`,
     headers: generateHeaders("auth", {
@@ -78,6 +107,7 @@ const productos = () => {
     total: () => (!isLoading ? response : 0),
   };
 
+  /** Haciendo la busqueda en la tabla */
   const search = {
     enabled: true,
     server: {
@@ -87,6 +117,7 @@ const productos = () => {
     },
   };
 
+  /** Haciendo la paginacion del contenido de la tabla */
   const pagination = {
     enabled: true,
     limit: 10,
@@ -102,6 +133,9 @@ const productos = () => {
   return (
     <>
       <PrivateRoute>
+        <Button type="primary" onClick={openProductCreate}>
+          <PlusOutlined /> Agregar producto
+        </Button>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Table
             columns={[
@@ -136,6 +170,15 @@ const productos = () => {
             bodyStyle={{ paddingBottom: 80 }}
           >
             <ProductDetail id={currentProduct} />
+          </Drawer>
+          <Drawer
+            title="Nuevo registro"
+            width={"50%"}
+            onClose={onCloseProductCreate}
+            visible={visibleProductCreate}
+            bodyStyle={{ paddingBottom: 80 }}
+          >
+            <ProductForm />
           </Drawer>
         </div>
       </PrivateRoute>
