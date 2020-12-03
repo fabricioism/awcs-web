@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { Form, Input, Button, Typography, notification } from "antd";
-import { NotificationLogin } from "../../atoms";
 import styles from "./loginForm.module.css";
 import axios from "axios";
 
@@ -12,16 +11,19 @@ const LoginForm = () => {
   const router = useRouter();
 
   const onFinish = async (values) => {
+    setloginError(false);
     const URL = `${process.env.NEXT_PUBLIC_API_URL}/auth/local`;
-    try {
-      const { data } = await axios.post(URL, values);
-      localStorage.setItem("jwt", data.jwt);
-      localStorage.setItem("loggedIn", true);
-      localStorage.setItem("userName", data.user.name);
-      router.push("/");
-    } catch (error) {
-      setloginError(true);
-    }
+    axios
+      .post(URL, values)
+      .then((response) => {
+        localStorage.setItem("jwt", response.data.jwt);
+        localStorage.setItem("loggedIn", true);
+        localStorage.setItem("userName", response.data.user.name);
+        router.push("/");
+      })
+      .catch((error) => {
+        setloginError(true);
+      });
   };
 
   return (

@@ -1,13 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Layout as AntLayout, Menu, Image, Dropdown, Button } from "antd";
-import { NavBar } from "../molecules";
-import { Footer } from "../atoms";
 import { isBrowser } from "../../commons/isBrowser";
 import styles from "./layout.module.css";
 import { DownOutlined } from "@ant-design/icons";
 
-// const { SubMenu } = Menu;
 const { Header, Content } = AntLayout;
 
 const Layout = ({ children }) => {
@@ -55,7 +52,6 @@ const Layout = ({ children }) => {
   return (
     <>
       <AntLayout>
-        {/* <NavBar /> */}
         {isLoggedIn ? (
           <Header className={styles.siteLayoutBackground}>
             <div className="logo" />
@@ -103,7 +99,6 @@ const Layout = ({ children }) => {
         ) : null}
         <AntLayout>
           <Content className={styles.siteLayoutBackground}>{children}</Content>
-          <Footer />
         </AntLayout>
       </AntLayout>
     </>

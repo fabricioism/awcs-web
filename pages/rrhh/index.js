@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { _ as lodash } from "gridjs-react";
-import { EmployeeDetail } from "../../components/organisms";
+import { EmployeeDetail, EmployeeCreateForm } from "../../components/organisms";
 import { Table } from "../../components/molecules";
 import { useWindowDimensions } from "../../commons/useWindowDimensions";
 import { useFetch } from "../../commons/useFetch";
@@ -8,19 +8,43 @@ import { isBrowser } from "../../commons/isBrowser";
 import { generateHeaders } from "../../commons/fetchFunctions";
 import { Button, Drawer } from "antd";
 import { PrivateRoute } from "../../components/routing";
+import { PlusOutlined } from "@ant-design/icons";
 
 const rrhh = () => {
+  /** Variables de estado para la visualizacion de un registro */
   const [visibleEmployeeDetail, setvisibleEmployeeDetail] = useState(false);
   const [CurrentEmployee, setCurrentEmployee] = useState(null);
 
+  /** Variable de estado para la creacion de un registro */
+  const [visibleEmployeeCreate, setvisibleEmployeeCreate] = useState(false);
+
+  /** INICIO -- FUNCIONES DE VISUALIZACION  DE LOS REGISTROS */
+
+  /** Funcion que acciona el drawer de visualizacion del registro */
   const openEmployeeDetail = (id) => {
     setCurrentEmployee(id);
     setvisibleEmployeeDetail(true);
   };
 
+  /** Funcion de accion para cerrar el drawer de visualizacion de los registros */
   const onCloseEmployeeDetail = () => {
     setvisibleEmployeeDetail(false);
   };
+  /** FIN -- FUNCIONES DE VISUALIZACION DE LOS REGISTROS */
+
+  /***** INICIO -- FUNCIONES DE CREACION DE UN REGISTRO ****/
+
+  /** Funcion que acciona el drawer de creacion de registro */
+  const openEmployeeCreate = () => {
+    setvisibleEmployeeCreate(true);
+  };
+
+  /** Funcion de accion para cerrar el drawer de creacion de registro */
+  const onCloseEmployeeCreate = () => {
+    setvisibleEmployeeCreate(false);
+  };
+
+  /** FIN -- FUNCIONES DE CREACION DE UN REGISTRO */
 
   const getJWT = () => {
     if (isBrowser() && localStorage.getItem("jwt")) {
@@ -102,6 +126,11 @@ const rrhh = () => {
   return (
     <>
       <PrivateRoute>
+        <div>
+          <Button type="primary" onClick={openEmployeeCreate}>
+            <PlusOutlined /> Agregar recurso humano
+          </Button>
+        </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Table
             columns={["ID", "Nombre", "Apellido", "Género", "Acciones"]}
@@ -130,6 +159,15 @@ const rrhh = () => {
             bodyStyle={{ paddingBottom: 80 }}
           >
             <EmployeeDetail id={CurrentEmployee} />
+          </Drawer>
+          <Drawer
+            title="Nuevo registro"
+            width={"50%"}
+            onClose={onCloseEmployeeCreate}
+            visible={visibleEmployeeCreate}
+            bodyStyle={{ paddingBottom: 80 }}
+          >
+            <EmployeeCreateForm />
           </Drawer>
         </div>
       </PrivateRoute>

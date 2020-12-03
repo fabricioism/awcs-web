@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "next/head";
+import Link from "next/link";
 import { Typography, Row, Col, Image, Button } from "antd";
 import styles from "./Home.module.css";
 const { Title } = Typography;
@@ -8,7 +9,7 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>Create Next App</title>
+        <title>Inicio | Adventure Works Cycle</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
@@ -25,14 +26,19 @@ const Home = () => {
                 width={200}
                 height={200}
                 src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/bicicleta_e06b5a6668.svg`}
+                alt={"Productos"}
                 preview={false}
               />
               <Title level={4} strong={true} className={styles.subTitle}>
                 Gestión de productos
               </Title>
-              <Button type="primary" style={{ width: "150px" }}>
-                Ir
-              </Button>
+              <Link href="/productos">
+                <a>
+                  <Button type="primary" style={{ width: "150px" }}>
+                    Ir
+                  </Button>
+                </a>
+              </Link>
             </div>
           </Col>
           <Col span={12}>
@@ -42,13 +48,23 @@ const Home = () => {
                 height={180}
                 src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/humano_3801190ba1.svg`}
                 preview={false}
+                alt={"Recursos humanos"}
               />
-              <Title level={4} strong={true} className={styles.subTitle}>
+              <Title
+                level={4}
+                strong={true}
+                className={styles.subTitle}
+                style={{ paddingBottom: "0px ", paddingTop: "15px" }}
+              >
                 Gestión de recursos humanos
               </Title>
-              <Button type="primary" style={{ width: "150px" }}>
-                Ir
-              </Button>
+              <Link href="/rrhh">
+                <a>
+                  <Button type="primary" style={{ width: "150px" }}>
+                    Ir
+                  </Button>
+                </a>
+              </Link>
             </div>
           </Col>
         </Row>
