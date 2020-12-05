@@ -1,22 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { _ as lodash } from "gridjs-react";
 import { Table } from "../../components/molecules";
-import { ProductDetail, ProductForm } from "../../components/organisms";
+import {
+  ProductDetail,
+  ProductForm,
+  ProductUpdate,
+} from "../../components/organisms";
 import { useWindowDimensions } from "../../commons/useWindowDimensions";
 import { useFetch } from "../../commons/useFetch";
 import { isBrowser } from "../../commons/isBrowser";
 import { generateHeaders } from "../../commons/fetchFunctions";
-import { Button, Drawer } from "antd";
+import { Button, Drawer, Typography, notification } from "antd";
 import { PrivateRoute } from "../../components/routing";
 import { PlusOutlined } from "@ant-design/icons";
 
+const { Title } = Typography;
+
 const productos = () => {
+  const [showNotification, setshowNotification] = useState(false);
+  const [isSuccess, setisSuccess] = useState(null);
+
   /** Variables de estado para la visualizacion de un registro */
   const [visibleProductDetail, setvisibleProductDetail] = useState(false);
   const [currentProduct, setcurrentProduct] = useState(null);
 
   /** Variables de estado para la creacion de un registro */
   const [visibleProductCreate, setvisibleProductCreate] = useState(false);
+
+  /** variables de estado para la edicion de un registro */
+  const [visibleProductUpdate, setvisibleProductUpdate] = useState(false);
 
   /** INICIO -- FUNCIONES DE VISUALIZACION  DE LOS REGISTROS */
 
@@ -31,18 +43,36 @@ const productos = () => {
     setvisibleProductDetail(false);
   };
 
-  /** FIN -- FUNCIONES DE VISUALIZACION DE LOS REGISTROS */
+  /** FIN -- FUNCIONES DE EDICION DE LOS REGISTROS */
+
+  /** INICIO -- FUNCIONES DE EDICION  DE LOS REGISTROS */
+
+  /** Funcion que acciona el drawer de EDICION del registro */
+  const openProductUpdate = (id) => {
+    setcurrentProduct(id);
+    setvisibleProductUpdate(true);
+  };
+
+  /** Funcion de accion para cerrar el drawer de EDICION de los registros */
+  const onCloseProductUpdate = () => {
+    setvisibleProductUpdate(false);
+  };
+
+  /** FIN -- FUNCIONES DE EDICION DE LOS REGISTROS */
 
   /***** INICIO -- FUNCIONES DE CREACION DE UN REGISTRO ****/
 
   /** Funcion que acciona el drawer de creacion de registro */
   const openProductCreate = () => {
+    setshowNotification(false);
     setvisibleProductCreate(true);
+    setisSuccess(null);
   };
 
   /** Funcion de accion para cerrar el drawer de creacion de registro */
   const onCloseProductCreate = () => {
     setvisibleProductCreate(false);
+    setshowNotification(false);
   };
 
   /** FIN -- FUNCIONES DE CREACION DE UN REGISTRO */
@@ -77,7 +107,9 @@ const productos = () => {
         <Button type="link" onClick={() => openProductDetail(id)}>
           Ver
         </Button>
-        <Button type="link">Editar</Button>
+        <Button type="link" onClick={() => openProductUpdate(id)}>
+          Editar
+        </Button>
       </div>
     );
   };
@@ -130,13 +162,58 @@ const productos = () => {
     },
   };
 
+  /** Gestion de las notificaciones de creacion de creacion */
+  useEffect(() => {
+    if (isSuccess) {
+      setshowNotification(true);
+      setvisibleProductCreate(false);
+    } else if (isSuccess != null) {
+      setshowNotification(true);
+    }
+  }, [isSuccess]);
+
   return (
     <>
       <PrivateRoute>
-        <Button type="primary" onClick={openProductCreate}>
-          <PlusOutlined /> Agregar producto
-        </Button>
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        {showNotification && isSuccess != null
+          ? notification[isSuccess ? "success" : "error"]({
+              message: isSuccess ? "Éxito" : "Error",
+              description: isSuccess
+                ? "Registro guardado"
+                : "Hubo un error al guardar, el campo 'Número de producto' debe ser único",
+              placement: isSuccess ? "topRight" : "bottomRight",
+              duration: 2,
+            })
+          : null}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            paddingTop: "40px",
+            paddingLeft: "120px",
+          }}
+        >
+          <Title level={2}>Productos</Title>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            paddingRight: "120px",
+            paddingTop: "30px",
+          }}
+        >
+          <Button type="primary" onClick={openProductCreate}>
+            <PlusOutlined /> Agregar producto
+          </Button>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            paddingBottom: "40px",
+          }}
+        >
           <Table
             columns={[
               "Número de Producto",
@@ -178,7 +255,16 @@ const productos = () => {
             visible={visibleProductCreate}
             bodyStyle={{ paddingBottom: 80 }}
           >
-            <ProductForm />
+            <ProductForm setisSuccess={setisSuccess} />
+          </Drawer>
+          <Drawer
+            title="Actualizando registro"
+            width={"50%"}
+            onClose={onCloseProductUpdate}
+            visible={visibleProductUpdate}
+            bodyStyle={{ paddingBottom: 80 }}
+          >
+            <ProductUpdate id={currentProduct} />
           </Drawer>
         </div>
       </PrivateRoute>

@@ -6,9 +6,11 @@ import { useWindowDimensions } from "../../commons/useWindowDimensions";
 import { useFetch } from "../../commons/useFetch";
 import { isBrowser } from "../../commons/isBrowser";
 import { generateHeaders } from "../../commons/fetchFunctions";
-import { Button, Drawer } from "antd";
+import { Button, Drawer, Typography } from "antd";
 import { PrivateRoute } from "../../components/routing";
 import { PlusOutlined } from "@ant-design/icons";
+
+const { Title } = Typography;
 
 const rrhh = () => {
   /** Variables de estado para la visualizacion de un registro */
@@ -126,12 +128,36 @@ const rrhh = () => {
   return (
     <>
       <PrivateRoute>
-        <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            paddingTop: "40px",
+            paddingLeft: "120px",
+          }}
+        >
+          <Title level={2}>Recursos humanos</Title>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            paddingRight: "120px",
+            paddingTop: "30px",
+          }}
+        >
           <Button type="primary" onClick={openEmployeeCreate}>
             <PlusOutlined /> Agregar recurso humano
           </Button>
         </div>
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "30px",
+            paddingBottom: "40px",
+          }}
+        >
           <Table
             columns={["ID", "Nombre", "Apellido", "Género", "Acciones"]}
             server={server}

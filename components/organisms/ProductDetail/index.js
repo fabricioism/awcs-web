@@ -51,6 +51,20 @@ const ProductDetail = ({ id }) => {
       <Row>
         <Col span={12}>
           <DescriptionItem
+            title="¿Es manufacturado por Adventure Works?"
+            content={`${response?.MakeFlag ? "Sí" : "No"}`}
+          />
+        </Col>
+        <Col span={12}>
+          <DescriptionItem
+            title="¿Es vendible?"
+            content={`${response?.FinishedGoodsFlag ? "Sí" : "No"}`}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <DescriptionItem
             title="Color"
             content={`${response?.Color ? response?.Color : "N/A"}`}
           />
@@ -65,6 +79,22 @@ const ProductDetail = ({ id }) => {
       <Row>
         <Col span={12}>
           <DescriptionItem
+            title="Peso"
+            content={`${response?.Weight ? response?.Weight : "N/A"}`}
+          />
+        </Col>
+        <Col span={12}>
+          <DescriptionItem
+            title="Días para manufacturarlo"
+            content={`${
+              response?.DaysToManufacture ? response?.DaysToManufacture : "N/A"
+            }`}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <DescriptionItem
             title="Stock de seguridad"
             content={`${response?.SafetyStockLevel}`}
           />
@@ -73,6 +103,32 @@ const ProductDetail = ({ id }) => {
           <DescriptionItem
             title="Punto de pedido"
             content={`${response?.ReorderPoint}`}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <DescriptionItem
+            title="Costo estándard"
+            content={`${
+              response?.StandardCost ? response?.StandardCost : "N/A"
+            }`}
+          />
+        </Col>
+        <Col span={12}>
+          <DescriptionItem
+            title="Costo de venta"
+            content={`${response?.ListPrice ? response?.ListPrice : "N/A"}`}
+          />
+        </Col>
+        <Col span={12}>
+          <DescriptionItem
+            title="Subcategoria"
+            content={`${
+              response?.product_subcategory
+                ? response?.product_subcategory.Name
+                : "N/A"
+            }`}
           />
         </Col>
       </Row>

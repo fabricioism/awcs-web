@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Button,
@@ -7,6 +7,7 @@ import {
   Input,
   Select,
   DatePicker,
+  notification,
   Switch,
   InputNumber,
 } from "antd";
@@ -20,8 +21,14 @@ import {
 import { getJWT } from "../../../commons/getJWT";
 import axios from "axios";
 
-const ProductForm = ({ setisSuccess }) => {
+const ProductUpdate = ({ id }) => {
   const [form] = Form.useForm();
+
+  const ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`;
+  const bearer = getJWT();
+  const headers = {
+    Authorization: `Bearer ${bearer}`,
+  };
 
   const [subCategoriesState, setsubCategoriesState] = useState(
     subCategories[categories[0]]
@@ -29,6 +36,26 @@ const ProductForm = ({ setisSuccess }) => {
   const [secondSubCategory, setsecondSubCategory] = useState(
     subCategories[categories[0]][0]
   );
+
+  const [productData, setproductData] = useState(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await fetch(ENDPOINT, { headers });
+        const json = await response.json();
+        setproductData(json);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    getData();
+  }, [ENDPOINT]);
+
+  useEffect(() => {
+    form.resetFields();
+    console.log("Hola");
+  }, [productData, form]);
 
   const getSubCategoryId = (value) => {
     return categoriesIds[value];
@@ -45,25 +72,29 @@ const ProductForm = ({ setisSuccess }) => {
 
   const onFinish = async (values) => {
     values["product_subcategory"] = getSubCategoryId(secondSubCategory);
-    const URL = `${process.env.NEXT_PUBLIC_API_URL}/products`;
+    const URL = `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`;
     const jwt = getJWT();
-    const headers = {
+    const header = {
       Authorization: `Bearer ${jwt}`,
     };
-
     try {
-      await axios.post(URL, values, { headers });
-      setisSuccess(true);
-      form.resetFields();
+      const { status } = await axios.put(URL, values, { headers: header });
+      setisSuccess(status === 200 ? true : false);
+      setshowNotification(true);
     } catch (error) {
-      setisSuccess(false);
       console.log("error", error);
     }
   };
 
   return (
     <>
-      <Form form={form} layout="vertical" hideRequiredMark onFinish={onFinish}>
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={productData}
+        hideRequiredMark
+        onFinish={onFinish}
+      >
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
@@ -91,12 +122,20 @@ const ProductForm = ({ setisSuccess }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="MakeFlag" label="¿Es manufacturado por AWC?">
+            <Form.Item
+              valuePropName="checked"
+              name="MakeFlag"
+              label="¿Es manufacturado por AWC?"
+            >
               <Switch checkedChildren="Sí" unCheckedChildren="No" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="FinishedGoodsFlag" label="¿Es vendible?">
+            <Form.Item
+              valuePropName="checked"
+              name="FinishedGoodsFlag"
+              label="¿Es vendible?"
+            >
               <Switch checkedChildren="Sí" unCheckedChildren="No" />
             </Form.Item>
           </Col>
@@ -186,4 +225,4 @@ const ProductForm = ({ setisSuccess }) => {
   );
 };
 
-export default ProductForm;
+export default ProductUpdate;
