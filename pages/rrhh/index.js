@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { _ as lodash } from "gridjs-react";
+import debounce from "lodash/debounce";
 import { EmployeeDetail, EmployeeCreateForm } from "../../components/organisms";
 import { Table } from "../../components/molecules";
 import { useWindowDimensions } from "../../commons/useWindowDimensions";
 import { useFetch } from "../../commons/useFetch";
 import { isBrowser } from "../../commons/isBrowser";
 import { generateHeaders } from "../../commons/fetchFunctions";
-import { Button, Drawer, Typography } from "antd";
+import { Button, Drawer, Select, Typography } from "antd";
 import { PrivateRoute } from "../../components/routing";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -147,7 +148,7 @@ const rrhh = () => {
           }}
         >
           <Button type="primary" onClick={openEmployeeCreate}>
-            <PlusOutlined /> Agregar recurso humano
+            <PlusOutlined /> Agregar empleado
           </Button>
         </div>
         <div
