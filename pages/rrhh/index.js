@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { _ as lodash } from "gridjs-react";
-import { EmployeeDetail, EmployeeCreateForm } from "../../components/organisms";
+import {
+  EmployeeDetail,
+  EmployeeCreateForm,
+  EmployeeUpdateForm,
+} from "../../components/organisms";
 import { Table } from "../../components/molecules";
 import { useWindowDimensions } from "../../commons/useWindowDimensions";
 import { useFetch } from "../../commons/useFetch";
 import { isBrowser } from "../../commons/isBrowser";
 import { generateHeaders } from "../../commons/fetchFunctions";
-import { Button, Drawer, Select, Typography } from "antd";
+import { Button, Drawer, notification, Typography } from "antd";
 import { PrivateRoute } from "../../components/routing";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -19,6 +23,13 @@ const rrhh = () => {
 
   /** Variable de estado para la creacion de un registro */
   const [visibleEmployeeCreate, setvisibleEmployeeCreate] = useState(false);
+  const [isSuccessCreate, setisSuccessCreate] = useState(null);
+  const [showNotificationCreate, setshowNotificationCreate] = useState(false);
+
+  /** Variables de estado para la edicion de un registro */
+  const [showNotificationUpdate, setshowNotificationUpdate] = useState(false);
+  const [isSuccessUpdate, setisSuccessUpdate] = useState(null);
+  const [visibleEmployeeUpdate, setvisibleEmployeeUpdate] = useState(false);
 
   /** INICIO -- FUNCIONES DE VISUALIZACION  DE LOS REGISTROS */
 
@@ -38,15 +49,33 @@ const rrhh = () => {
 
   /** Funcion que acciona el drawer de creacion de registro */
   const openEmployeeCreate = () => {
+    setshowNotificationCreate(false);
     setvisibleEmployeeCreate(true);
+    setisSuccessCreate(null);
   };
 
   /** Funcion de accion para cerrar el drawer de creacion de registro */
   const onCloseEmployeeCreate = () => {
     setvisibleEmployeeCreate(false);
+    setshowNotificationCreate(false);
   };
 
   /** FIN -- FUNCIONES DE CREACION DE UN REGISTRO */
+
+  /** INICIO FUNCIONES DE ACTUALIZACION */
+  const openEmployeeUpdate = (id) => {
+    setshowNotificationUpdate(false);
+    setvisibleEmployeeUpdate(true);
+    setisSuccessUpdate(null);
+    setCurrentEmployee(id);
+  };
+
+  const onCloseEmployeeUpdate = () => {
+    setvisibleEmployeeUpdate(false);
+    setshowNotificationUpdate(false);
+  };
+
+  /** FIN FUNCIONES DE ACTUALIZACION */
 
   const getJWT = () => {
     if (isBrowser() && localStorage.getItem("jwt")) {
@@ -75,7 +104,9 @@ const rrhh = () => {
         <Button type="link" onClick={() => openEmployeeDetail(id)}>
           Ver
         </Button>
-        <Button type="link">Editar</Button>
+        <Button type="link" onClick={() => openEmployeeUpdate(id)}>
+          Editar
+        </Button>
       </div>
     );
   };
@@ -125,9 +156,38 @@ const rrhh = () => {
     },
   };
 
+  useEffect(() => {
+    if (isSuccessCreate) {
+      setshowNotificationCreate(true);
+      setvisibleEmployeeCreate(false);
+    } else if (isSuccessCreate != null) {
+      setshowNotificationCreate(true);
+    }
+  }, [isSuccessCreate]);
+
   return (
     <>
       <PrivateRoute>
+        {showNotificationCreate && isSuccessCreate != null
+          ? notification[isSuccessCreate ? "success" : "error"]({
+              message: isSuccessCreate ? "Éxito" : "Error",
+              description: isSuccessCreate
+                ? "Registro guardado"
+                : "Hubo un error al guardar",
+              placement: isSuccessCreate ? "topRight" : "bottomRight",
+              duration: 2,
+            })
+          : null}
+        {showNotificationUpdate && isSuccessUpdate != null
+          ? notification[isSuccessUpdate ? "success" : "error"]({
+              message: isSuccessUpdate ? "Éxito" : "Error",
+              description: isSuccessUpdate
+                ? "Registro actualizado"
+                : "Hubo un error al actualizar",
+              placement: isSuccessUpdate ? "topRight" : "bottomRight",
+              duration: 2,
+            })
+          : null}
         <div
           style={{
             display: "flex",
@@ -193,7 +253,19 @@ const rrhh = () => {
             visible={visibleEmployeeCreate}
             bodyStyle={{ paddingBottom: 80 }}
           >
-            <EmployeeCreateForm />
+            <EmployeeCreateForm setisSuccessCreate={setisSuccessCreate} />
+          </Drawer>
+          <Drawer
+            title="Actualizando registro"
+            width={"50%"}
+            onClose={onCloseEmployeeUpdate}
+            visible={visibleEmployeeUpdate}
+            bodyStyle={{ paddingBottom: 80 }}
+          >
+            <EmployeeUpdateForm
+              id={CurrentEmployee}
+              setisSuccessUpdate={setisSuccessUpdate}
+            />
           </Drawer>
         </div>
       </PrivateRoute>

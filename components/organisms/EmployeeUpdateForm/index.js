@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   Form,
   Button,
@@ -15,13 +15,61 @@ import {
 } from "antd";
 import debounce from "lodash/debounce";
 import { getJWT } from "../../../commons/getJWT";
+import moment from "moment";
 import axios from "axios";
 
 const { Title } = Typography;
 const { Option } = Select;
 
-const EmployeeCreateForm = ({ setisSuccessCreate }) => {
+const EmployeeUpdateForm = ({ id, setisSuccessUpdate }) => {
   const [form] = Form.useForm();
+
+  const ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/employees/${id}`;
+  const bearer = getJWT();
+  const headers = {
+    Authorization: `Bearer ${bearer}`,
+  };
+
+  const [employeeData, setemployeeData] = useState(null);
+  const [currentDepartment, setcurrentDepartment] = useState({});
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await fetch(ENDPOINT, { headers });
+        const json = await response.json();
+        setemployeeData(json);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    getData();
+  }, [ENDPOINT]);
+
+  useEffect(() => {
+    const getDepartment = async () => {
+      try {
+        let {
+          department: currentDepartmentId,
+        } = employeeData?.employeedepartmenthistories
+          ? employeeData?.employeedepartmenthistories?.pop()
+          : {};
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/departments/${currentDepartmentId}`
+        );
+        const json = await res.json();
+        setcurrentDepartment({ id: json.DepartmentID, Name: json.Name });
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    getDepartment();
+  }, [employeeData]);
+
+  useEffect(() => {
+    form.resetFields();
+  }, [employeeData, form]);
 
   /** Variables de estado para el departamento */
   const [departmentQuery, setdepartmentQuery] = useState("");
@@ -32,18 +80,17 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
     values["BirthDate"] = values.BirthDate.format("YYYY-MM-DD");
     values["HireDate"] = values.HireDate.format("YYYY-MM-DD");
 
-    const URL = `${process.env.NEXT_PUBLIC_API_URL}/employees`;
+    const URL = `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`;
     const jwt = getJWT();
-    const headers = {
+    const header = {
       Authorization: `Bearer ${jwt}`,
     };
 
     try {
-      await axios.post(URL, values, { headers });
-      setisSuccessCreate(true);
-      form.resetFields();
+      await axios.put(URL, values, { headers: header });
+      setisSuccessUpdate(true);
     } catch (error) {
-      setisSuccessCreate(false);
+      setisSuccessUpdate(false);
     }
   };
 
@@ -83,9 +130,36 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
     };
   }, [departmentQuery, delayedQuery]);
 
+  const dateFormat = "YYYY-MM-DD";
   return (
     <>
-      <Form form={form} layout="vertical" hideRequiredMark onFinish={onFinish}>
+      <Form
+        form={form}
+        initialValues={{
+          FirstName: employeeData?.person.FirstName,
+          MiddleName: employeeData?.person.MiddleName
+            ? employeeData?.person.MiddleName
+            : "N/A",
+          LastName: employeeData?.person.LastName,
+          NationalIDNumber: employeeData?.NationalIDNumber,
+          Gender: employeeData?.Gender,
+          Email: employeeData?.person.Email
+            ? employeeData?.person.Email
+            : "N/A",
+          PhoneNumber: employeeData?.person.PhoneNumber
+            ? employeeData?.person.PhoneNumber
+            : "N/A",
+          MaritalStatus: employeeData?.MaritalStatus,
+          JobTitle: employeeData?.JobTitle,
+          SalariedFlag: employeeData?.SalariedFlag,
+          CurrentFlag: employeeData?.CurrentFlag,
+          SickLeaveHours: employeeData?.SickLeaveHours,
+          VacationHours: employeeData?.VacationHours,
+        }}
+        layout="vertical"
+        hideRequiredMark
+        onFinish={onFinish}
+      >
         <Title level={5}>Datos personales</Title>
         <Row gutter={16}>
           <Col span={12}>
@@ -152,7 +226,9 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
                 },
               ]}
             >
-              <DatePicker />
+              <DatePicker
+                defaultValue={moment(employeeData?.BirthDate, dateFormat)}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -255,6 +331,7 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
             >
               <Select
                 labelInValue
+                defaultValue={currentDepartment.id}
                 value={departmentQuery}
                 placeholder="Seleccione"
                 notFoundContent={fetching ? <Spin size="small" /> : null}
@@ -268,6 +345,7 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
                   0
                 }
                 optionFilterProp="children"
+                searchValue={currentDepartment.Name}
               >
                 {departments?.map((d) => (
                   <Option key={d?.value}>{d?.text}</Option>
@@ -277,18 +355,19 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
           </Col>
           <Col span={12}>
             <Form.Item
+              valuePropName="checked"
               name="SalariedFlag"
               label="¿Es empleado de tiempo completo?"
             >
-              <Switch
-                defaultChecked
-                checkedChildren="Sí"
-                unCheckedChildren="No"
-              />
+              <Switch checkedChildren="Sí" unCheckedChildren="No" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="CurrentFlag" label="¿Es un empleado activo?">
+            <Form.Item
+              valuePropName="checked"
+              name="CurrentFlag"
+              label="¿Es un empleado activo?"
+            >
               <Switch
                 defaultChecked
                 checkedChildren="Sí"
@@ -337,7 +416,9 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
                 },
               ]}
             >
-              <DatePicker />
+              <DatePicker
+                defaultValue={moment(employeeData?.HireDate, dateFormat)}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -356,5 +437,4 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
     </>
   );
 };
-
-export default EmployeeCreateForm;
+export default EmployeeUpdateForm;
