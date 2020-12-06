@@ -103,7 +103,11 @@ const ProductForm = ({ setisSuccess }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="Size" label="Tamaño">
+            <Form.Item
+              name="Size"
+              label="Tamaño"
+              placeholder="Tamaño del producto"
+            >
               <Input />
             </Form.Item>
           </Col>

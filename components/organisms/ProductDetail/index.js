@@ -22,12 +22,6 @@ const ProductDetail = ({ id }) => {
 
   return (
     <>
-      {/* <p
-        className={styles.siteDescriptionItemProfileP}
-        style={{ marginBottom: 24 }}
-      >
-        Perfil del empleado
-      </p> */}
       <p
         style={{ fontWeight: "bold" }}
         className={styles.siteDescriptionItemProfileP}

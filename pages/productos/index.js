@@ -10,13 +10,36 @@ import { useWindowDimensions } from "../../commons/useWindowDimensions";
 import { useFetch } from "../../commons/useFetch";
 import { isBrowser } from "../../commons/isBrowser";
 import { generateHeaders } from "../../commons/fetchFunctions";
-import { Button, Drawer, Typography, notification } from "antd";
+import {
+  categories,
+  subCategories,
+  categoriesIds,
+} from "../../commons/categories";
+import {
+  Button,
+  Drawer,
+  Typography,
+  notification,
+  Switch,
+  Row,
+  Col,
+  Select,
+} from "antd";
 import { PrivateRoute } from "../../components/routing";
 import { PlusOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
 const productos = () => {
+  /** Variables de estado para los filtros */
+  const [showFilters, setshowFilters] = useState(false);
+  const [subCategoriesState, setsubCategoriesState] = useState(
+    subCategories[categories[0]]
+  );
+  const [secondSubCategory, setsecondSubCategory] = useState(
+    subCategories[categories[0]][0]
+  );
+
   /** Variables de estado para la visualizacion de un registro */
   const [visibleProductDetail, setvisibleProductDetail] = useState(false);
   const [currentProduct, setcurrentProduct] = useState(null);
@@ -30,6 +53,25 @@ const productos = () => {
   const [showNotificationUpdate, setshowNotificationUpdate] = useState(false);
   const [isSuccessUpdate, setisSuccessUpdate] = useState(null);
   const [visibleProductUpdate, setvisibleProductUpdate] = useState(false);
+
+  /** INICIO FILTROS */
+  const onChangeFilter = (value) => {
+    setshowFilters(value);
+  };
+
+  const handleCategoriesChange = (value) => {
+    setsubCategoriesState(subCategories[value]);
+    setsecondSubCategory(subCategories[value][0]);
+  };
+
+  const onSecondCategoryChange = (value) => {
+    setsecondSubCategory(value);
+  };
+
+  const getSubCategoryId = (value) => {
+    return categoriesIds[value];
+  };
+  /** FIN FILTROS */
 
   /** INICIO -- FUNCIONES DE VISUALIZACION  DE LOS REGISTROS */
 
@@ -120,7 +162,13 @@ const productos = () => {
 
   /** Halando la data que va en la tabla */
   const server = {
-    url: `${process.env.NEXT_PUBLIC_API_URL}/products?_sort=id:asc`,
+    url: !showFilters
+      ? `${process.env.NEXT_PUBLIC_API_URL}/products?_sort=id:asc`
+      : `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/products?product_subcategory.id_eq=${getSubCategoryId(
+          secondSubCategory
+        )}`,
     headers: generateHeaders("auth", {
       token: getJWT(),
     }),
@@ -208,33 +256,86 @@ const productos = () => {
               duration: 2,
             })
           : null}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-start",
-            paddingTop: "40px",
-            paddingLeft: "120px",
-          }}
-        >
-          <Title level={2}>Productos</Title>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            paddingRight: "120px",
-            paddingTop: "30px",
-          }}
-        >
-          <Button type="primary" onClick={openProductCreate}>
-            <PlusOutlined /> Agregar producto
-          </Button>
-        </div>
+        <Row>
+          <Col span={12}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                paddingTop: "40px",
+                paddingLeft: "120px",
+              }}
+            >
+              <Title level={5}>
+                ¿Desea hacer busqueda con filtros de los productos?
+              </Title>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                paddingTop: "10px",
+                paddingLeft: "120px",
+              }}
+            >
+              <Switch
+                onChange={onChangeFilter}
+                checkedChildren="Sí"
+                unCheckedChildren="No"
+              />
+            </div>
+            {showFilters ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  paddingTop: "20px",
+                  paddingLeft: "120px",
+                }}
+              >
+                <Select
+                  defaultValue={categories[0]}
+                  style={{ width: 120, marginRight: "15px" }}
+                  onChange={handleCategoriesChange}
+                >
+                  {categories.map((item) => (
+                    <Option key={item}>{item}</Option>
+                  ))}
+                </Select>
+                <Select
+                  style={{ width: 160 }}
+                  value={secondSubCategory}
+                  onChange={onSecondCategoryChange}
+                >
+                  {subCategoriesState.map((item) => (
+                    <Option key={item}>{item}</Option>
+                  ))}
+                </Select>
+              </div>
+            ) : null}
+          </Col>
+          <Col span={12}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                paddingRight: "120px",
+                paddingTop: "50px",
+              }}
+            >
+              <Button type="primary" onClick={openProductCreate}>
+                <PlusOutlined /> Agregar producto
+              </Button>
+            </div>
+          </Col>
+        </Row>
+
         <div
           style={{
             display: "flex",
             justifyContent: "center",
-            paddingBottom: "40px",
+            paddingBottom: "25px",
+            paddingTop: "30px",
           }}
         >
           <Table
