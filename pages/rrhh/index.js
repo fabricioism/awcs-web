@@ -1,6 +1,5 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { _ as lodash } from "gridjs-react";
-import debounce from "lodash/debounce";
 import { EmployeeDetail, EmployeeCreateForm } from "../../components/organisms";
 import { Table } from "../../components/molecules";
 import { useWindowDimensions } from "../../commons/useWindowDimensions";

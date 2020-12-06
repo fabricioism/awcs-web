@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Form,
   Button,
@@ -6,6 +6,7 @@ import {
   Row,
   Input,
   Select,
+  Spin,
   DatePicker,
   notification,
   Switch,
@@ -13,15 +14,20 @@ import {
   Typography,
   Divider,
 } from "antd";
-import { useFetch } from "../../../commons/useFetch";
-import { Notification } from "../../atoms";
+import debounce from "lodash/debounce";
 import { categories, subCategories } from "../../../commons/categories";
 import { getJWT } from "../../../commons/getJWT";
 import axios from "axios";
 
 const { Title } = Typography;
+const { Option } = Select;
 
 const EmployeeCreateForm = () => {
+  /** Variables de estado para el departamento */
+  const [departmentQuery, setdepartmentQuery] = useState("");
+  const [departments, setdepartments] = useState([]);
+  const [fetching, setfetching] = useState(false);
+
   const [showNotification, setshowNotification] = useState(false);
   const [isSuccess, setisSuccess] = useState(false);
   const [subCategoriesState, setsubCategoriesState] = useState(
@@ -51,19 +57,52 @@ const EmployeeCreateForm = () => {
       Authorization: `Bearer ${jwt}`,
     };
 
-    axios
+    try {
+      console.log("values", values);
+      await axios.post(URL, values, { headers });
+      setisSuccess(true);
+      setshowNotification(true);
+    } catch (error) {
+      setisSuccess(false);
+      setshowNotification(true);
+    }
+  };
 
-      .post(URL, values, { headers })
-
-      .then((response) => {
-        setisSuccess(response?.status === 200 ? true : false);
-        setshowNotification(true);
+  /** FETCH DE DEPARTAMENTO */
+  const fetchItem = (value) => {
+    setdepartments([]);
+    setfetching(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/departments?Name_contains=${value}&_limit=3`
+    )
+      .then((response) => response.json())
+      .then((body) => {
+        const data = body.map((item) => ({
+          text: item["Name"],
+          value: item["id"],
+        }));
+        setdepartments(data);
+        setfetching(false);
       })
       .catch((error) => {
-        setisSuccess(false);
-        setshowNotification(true);
+        console.log("error", error);
       });
   };
+
+  const delayedQuery = useCallback(debounce(fetchItem, 800), [departmentQuery]);
+
+  const handleChangeDepartment = (value) => {
+    setdepartmentQuery(value);
+    setdepartments([]);
+    setfetching(false);
+  };
+
+  useEffect(() => {
+    delayedQuery();
+    return () => {
+      delayedQuery.cancel;
+    };
+  }, [departmentQuery, delayedQuery]);
 
   return (
     <>
@@ -233,17 +272,36 @@ const EmployeeCreateForm = () => {
           </Col>
           <Col span={12}>
             <Form.Item
-              name="HireDate"
-              label="Fecha de contratación"
+              name="depto"
+              label="Departamento de asignación"
               rules={[
                 {
                   required: true,
                   message:
-                    "Por favor ingrese la fecha de contratación de la persona",
+                    "Por favor seleccione el Depto. donde se asignará a la persona",
                 },
               ]}
             >
-              <DatePicker />
+              <Select
+                labelInValue
+                value={departmentQuery}
+                placeholder="Seleccione"
+                notFoundContent={fetching ? <Spin size="small" /> : null}
+                filterOption={false}
+                onSearch={fetchItem}
+                onChange={handleChangeDepartment}
+                style={{ width: "100%" }}
+                showSearch
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+                optionFilterProp="children"
+              >
+                {departments?.map((d) => (
+                  <Option key={d?.value}>{d?.text}</Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -294,6 +352,21 @@ const EmployeeCreateForm = () => {
               ]}
             >
               <InputNumber min={0} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="HireDate"
+              label="Fecha de contratación"
+              rules={[
+                {
+                  required: true,
+                  message:
+                    "Por favor ingrese la fecha de contratación de la persona",
+                },
+              ]}
+            >
+              <DatePicker />
             </Form.Item>
           </Col>
         </Row>
