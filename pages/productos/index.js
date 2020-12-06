@@ -17,17 +17,18 @@ import { PlusOutlined } from "@ant-design/icons";
 const { Title } = Typography;
 
 const productos = () => {
-  const [showNotification, setshowNotification] = useState(false);
-  const [isSuccess, setisSuccess] = useState(null);
-
   /** Variables de estado para la visualizacion de un registro */
   const [visibleProductDetail, setvisibleProductDetail] = useState(false);
   const [currentProduct, setcurrentProduct] = useState(null);
 
   /** Variables de estado para la creacion de un registro */
+  const [showNotification, setshowNotification] = useState(false);
+  const [isSuccess, setisSuccess] = useState(null);
   const [visibleProductCreate, setvisibleProductCreate] = useState(false);
 
   /** variables de estado para la edicion de un registro */
+  const [showNotificationUpdate, setshowNotificationUpdate] = useState(false);
+  const [isSuccessUpdate, setisSuccessUpdate] = useState(null);
   const [visibleProductUpdate, setvisibleProductUpdate] = useState(false);
 
   /** INICIO -- FUNCIONES DE VISUALIZACION  DE LOS REGISTROS */
@@ -43,19 +44,22 @@ const productos = () => {
     setvisibleProductDetail(false);
   };
 
-  /** FIN -- FUNCIONES DE EDICION DE LOS REGISTROS */
+  /** FIN -- FUNCIONES DE VISUALIZACION DE LOS REGISTROS */
 
   /** INICIO -- FUNCIONES DE EDICION  DE LOS REGISTROS */
 
   /** Funcion que acciona el drawer de EDICION del registro */
   const openProductUpdate = (id) => {
-    setcurrentProduct(id);
+    setshowNotificationUpdate(false);
     setvisibleProductUpdate(true);
+    setisSuccessUpdate(null);
+    setcurrentProduct(id);
   };
 
   /** Funcion de accion para cerrar el drawer de EDICION de los registros */
   const onCloseProductUpdate = () => {
     setvisibleProductUpdate(false);
+    setshowNotificationUpdate(false);
   };
 
   /** FIN -- FUNCIONES DE EDICION DE LOS REGISTROS */
@@ -172,6 +176,15 @@ const productos = () => {
     }
   }, [isSuccess]);
 
+  useEffect(() => {
+    if (isSuccessUpdate) {
+      setshowNotificationUpdate(true);
+      setvisibleProductUpdate(false);
+    } else if (isSuccessUpdate != null) {
+      setvisibleProductUpdate(true);
+    }
+  }, [isSuccessUpdate]);
+
   return (
     <>
       <PrivateRoute>
@@ -182,6 +195,16 @@ const productos = () => {
                 ? "Registro guardado"
                 : "Hubo un error al guardar, el campo 'Número de producto' debe ser único",
               placement: isSuccess ? "topRight" : "bottomRight",
+              duration: 2,
+            })
+          : null}
+        {showNotificationUpdate && isSuccessUpdate != null
+          ? notification[isSuccessUpdate ? "success" : "error"]({
+              message: isSuccessUpdate ? "Éxito" : "Error",
+              description: isSuccessUpdate
+                ? "Registro actualizado"
+                : "Hubo un error al guardar, intente de nuevo",
+              placement: isSuccessUpdate ? "topRight" : "bottomRight",
               duration: 2,
             })
           : null}
@@ -264,7 +287,10 @@ const productos = () => {
             visible={visibleProductUpdate}
             bodyStyle={{ paddingBottom: 80 }}
           >
-            <ProductUpdate id={currentProduct} />
+            <ProductUpdate
+              id={currentProduct}
+              setisSuccessUpdate={setisSuccessUpdate}
+            />
           </Drawer>
         </div>
       </PrivateRoute>

@@ -6,13 +6,9 @@ import {
   Row,
   Input,
   Select,
-  DatePicker,
-  notification,
   Switch,
   InputNumber,
 } from "antd";
-import { useFetch } from "../../../commons/useFetch";
-import { Notification } from "../../atoms";
 import {
   categories,
   subCategories,
@@ -21,7 +17,7 @@ import {
 import { getJWT } from "../../../commons/getJWT";
 import axios from "axios";
 
-const ProductUpdate = ({ id }) => {
+const ProductUpdate = ({ id, setisSuccessUpdate }) => {
   const [form] = Form.useForm();
 
   const ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`;
@@ -54,7 +50,6 @@ const ProductUpdate = ({ id }) => {
 
   useEffect(() => {
     form.resetFields();
-    console.log("Hola");
   }, [productData, form]);
 
   const getSubCategoryId = (value) => {
@@ -78,10 +73,10 @@ const ProductUpdate = ({ id }) => {
       Authorization: `Bearer ${jwt}`,
     };
     try {
-      const { status } = await axios.put(URL, values, { headers: header });
-      setisSuccess(status === 200 ? true : false);
-      setshowNotification(true);
+      await axios.put(URL, values, { headers: header });
+      setisSuccessUpdate(true);
     } catch (error) {
+      setisSuccessUpdate(false);
       console.log("error", error);
     }
   };
