@@ -80,7 +80,7 @@ const EmployeeUpdateForm = ({ id, setisSuccessUpdate }) => {
     values["BirthDate"] = values.BirthDate.format("YYYY-MM-DD");
     values["HireDate"] = values.HireDate.format("YYYY-MM-DD");
 
-    const URL = `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`;
+    const URL = `${process.env.NEXT_PUBLIC_API_URL}/employees/${id}`;
     const jwt = getJWT();
     const header = {
       Authorization: `Bearer ${jwt}`,
@@ -331,7 +331,7 @@ const EmployeeUpdateForm = ({ id, setisSuccessUpdate }) => {
             >
               <Select
                 labelInValue
-                defaultValue={currentDepartment.id}
+                // defaultValue={currentDepartment.id}
                 value={departmentQuery}
                 placeholder="Seleccione"
                 notFoundContent={fetching ? <Spin size="small" /> : null}
@@ -345,7 +345,7 @@ const EmployeeUpdateForm = ({ id, setisSuccessUpdate }) => {
                   0
                 }
                 optionFilterProp="children"
-                searchValue={currentDepartment.Name}
+                // searchValue={currentDepartment.Name}
               >
                 {departments?.map((d) => (
                   <Option key={d?.value}>{d?.text}</Option>
