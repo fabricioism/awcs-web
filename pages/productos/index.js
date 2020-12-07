@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import { _ as lodash } from "gridjs-react";
 import { Table } from "../../components/molecules";
 import {
@@ -236,6 +237,10 @@ const productos = () => {
   return (
     <>
       <PrivateRoute>
+        <Head>
+          <title>Productos | Adventure Works Cycle</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
         {showNotification && isSuccess != null
           ? notification[isSuccess ? "success" : "error"]({
               message: isSuccess ? "Éxito" : "Error",

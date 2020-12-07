@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import { _ as lodash } from "gridjs-react";
 import {
   EmployeeDetail,
@@ -177,6 +178,10 @@ const rrhh = () => {
   return (
     <>
       <PrivateRoute>
+        <Head>
+          <title>RRHH | Adventure Works Cycle</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
         {showNotificationCreate && isSuccessCreate != null
           ? notification[isSuccessCreate ? "success" : "error"]({
               message: isSuccessCreate ? "Éxito" : "Error",
