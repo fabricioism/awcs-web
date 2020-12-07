@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import {
   Form,
   Button,
@@ -13,7 +13,8 @@ import {
   Typography,
   Divider,
 } from "antd";
-import debounce from "lodash/debounce";
+import { departments, departmentsIds } from "../../../commons/departments";
+
 import { getJWT } from "../../../commons/getJWT";
 import axios from "axios";
 
@@ -22,11 +23,6 @@ const { Option } = Select;
 
 const EmployeeCreateForm = ({ setisSuccessCreate }) => {
   const [form] = Form.useForm();
-
-  /** Variables de estado para el departamento */
-  const [departmentQuery, setdepartmentQuery] = useState("");
-  const [departments, setdepartments] = useState([]);
-  const [fetching, setfetching] = useState(false);
 
   const onFinish = async (values) => {
     values["BirthDate"] = values.BirthDate.format("YYYY-MM-DD");
@@ -46,42 +42,6 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
       setisSuccessCreate(false);
     }
   };
-
-  /** FETCH DE DEPARTAMENTO */
-  const fetchItem = (value) => {
-    setdepartments([]);
-    setfetching(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/departments?Name_contains=${value}&_limit=3`
-    )
-      .then((response) => response.json())
-      .then((body) => {
-        const data = body.map((item) => ({
-          text: item["Name"],
-          value: item["id"],
-        }));
-        setdepartments(data);
-        setfetching(false);
-      })
-      .catch((error) => {
-        console.log("error", error);
-      });
-  };
-
-  const delayedQuery = useCallback(debounce(fetchItem, 800), [departmentQuery]);
-
-  const handleChangeDepartment = (value) => {
-    setdepartmentQuery(value);
-    setdepartments([]);
-    setfetching(false);
-  };
-
-  useEffect(() => {
-    delayedQuery();
-    return () => {
-      delayedQuery.cancel;
-    };
-  }, [departmentQuery, delayedQuery]);
 
   return (
     <>
@@ -253,24 +213,9 @@ const EmployeeCreateForm = ({ setisSuccessCreate }) => {
                 },
               ]}
             >
-              <Select
-                labelInValue
-                value={departmentQuery}
-                placeholder="Seleccione"
-                notFoundContent={fetching ? <Spin size="small" /> : null}
-                filterOption={false}
-                onSearch={fetchItem}
-                onChange={handleChangeDepartment}
-                style={{ width: "100%" }}
-                showSearch
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-                optionFilterProp="children"
-              >
-                {departments?.map((d) => (
-                  <Option key={d?.value}>{d?.text}</Option>
+              <Select>
+                {departments?.map((item) => (
+                  <Option key={departmentsIds[item]}>{item}</Option>
                 ))}
               </Select>
             </Form.Item>

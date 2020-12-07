@@ -13,8 +13,8 @@ import {
   Typography,
   Divider,
 } from "antd";
-import debounce from "lodash/debounce";
 import { getJWT } from "../../../commons/getJWT";
+import { departments, departmentsIds } from "../../../commons/departments";
 import moment from "moment";
 import axios from "axios";
 
@@ -31,7 +31,6 @@ const EmployeeUpdateForm = ({ id, setisSuccessUpdate }) => {
   };
 
   const [employeeData, setemployeeData] = useState(null);
-  const [currentDepartment, setcurrentDepartment] = useState({});
 
   useEffect(() => {
     const getData = async () => {
@@ -47,34 +46,8 @@ const EmployeeUpdateForm = ({ id, setisSuccessUpdate }) => {
   }, [ENDPOINT]);
 
   useEffect(() => {
-    const getDepartment = async () => {
-      try {
-        let {
-          department: currentDepartmentId,
-        } = employeeData?.employeedepartmenthistories
-          ? employeeData?.employeedepartmenthistories?.pop()
-          : {};
-
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/departments/${currentDepartmentId}`
-        );
-        const json = await res.json();
-        setcurrentDepartment({ id: json.DepartmentID, Name: json.Name });
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    getDepartment();
-  }, [employeeData]);
-
-  useEffect(() => {
     form.resetFields();
   }, [employeeData, form]);
-
-  /** Variables de estado para el departamento */
-  const [departmentQuery, setdepartmentQuery] = useState("");
-  const [departments, setdepartments] = useState([]);
-  const [fetching, setfetching] = useState(false);
 
   const onFinish = async (values) => {
     values["BirthDate"] = values.BirthDate.format("YYYY-MM-DD");
@@ -93,42 +66,6 @@ const EmployeeUpdateForm = ({ id, setisSuccessUpdate }) => {
       setisSuccessUpdate(false);
     }
   };
-
-  /** FETCH DE DEPARTAMENTO */
-  const fetchItem = (value) => {
-    setdepartments([]);
-    setfetching(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/departments?Name_contains=${value}&_limit=3`
-    )
-      .then((response) => response.json())
-      .then((body) => {
-        const data = body.map((item) => ({
-          text: item["Name"],
-          value: item["id"],
-        }));
-        setdepartments(data);
-        setfetching(false);
-      })
-      .catch((error) => {
-        console.log("error", error);
-      });
-  };
-
-  const delayedQuery = useCallback(debounce(fetchItem, 800), [departmentQuery]);
-
-  const handleChangeDepartment = (value) => {
-    setdepartmentQuery(value);
-    setdepartments([]);
-    setfetching(false);
-  };
-
-  useEffect(() => {
-    delayedQuery();
-    return () => {
-      delayedQuery.cancel;
-    };
-  }, [departmentQuery, delayedQuery]);
 
   const dateFormat = "YYYY-MM-DD";
   return (
@@ -329,26 +266,9 @@ const EmployeeUpdateForm = ({ id, setisSuccessUpdate }) => {
                 },
               ]}
             >
-              <Select
-                labelInValue
-                // defaultValue={currentDepartment.id}
-                value={departmentQuery}
-                placeholder="Seleccione"
-                notFoundContent={fetching ? <Spin size="small" /> : null}
-                filterOption={false}
-                onSearch={fetchItem}
-                onChange={handleChangeDepartment}
-                style={{ width: "100%" }}
-                showSearch
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-                optionFilterProp="children"
-                // searchValue={currentDepartment.Name}
-              >
-                {departments?.map((d) => (
-                  <Option key={d?.value}>{d?.text}</Option>
+              <Select>
+                {departments?.map((item) => (
+                  <Option key={departmentsIds[item]}>{item}</Option>
                 ))}
               </Select>
             </Form.Item>

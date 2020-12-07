@@ -165,6 +165,15 @@ const rrhh = () => {
     }
   }, [isSuccessCreate]);
 
+  useEffect(() => {
+    if (isSuccessUpdate) {
+      setshowNotificationUpdate(true);
+      setvisibleEmployeeUpdate(false);
+    } else if (isSuccessUpdate != null) {
+      setvisibleEmployeeUpdate(true);
+    }
+  }, [isSuccessUpdate]);
+
   return (
     <>
       <PrivateRoute>

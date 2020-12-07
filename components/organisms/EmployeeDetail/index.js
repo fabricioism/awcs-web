@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useFetch } from "../../../commons/useFetch";
 import { Col, Divider, Row } from "antd";
 import styles from "./employeeDetail.module.css";
 
 const EmployeeDetail = ({ id }) => {
+  const [currentDepartment, setcurrentDepartment] = useState({});
+
   const { response, isLoading } = useFetch(
     `${process.env.NEXT_PUBLIC_API_URL}/employees/${id}`,
     {
@@ -12,6 +14,30 @@ const EmployeeDetail = ({ id }) => {
     true,
     [id]
   );
+
+  useEffect(() => {
+    const getDepartment = async () => {
+      try {
+        let {
+          department: currentDepartmentId,
+        } = response?.employeedepartmenthistories
+          ? response?.employeedepartmenthistories?.pop()
+          : {};
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/departments/${currentDepartmentId}`
+        );
+        const json = await res.json();
+        setcurrentDepartment({
+          id: json.DepartmentID,
+          Name: json.Name,
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    getDepartment();
+  }, [response]);
 
   const DescriptionItem = ({ title, content }) => (
     <div className={styles.siteDescriptionItemProfileWrapper}>
@@ -68,10 +94,22 @@ const EmployeeDetail = ({ id }) => {
         </Col>
       </Row>
       <Row>
-        <Col span={24}>
+        <Col span={12}>
           <DescriptionItem
             title="Estado civil"
             content={`${response?.MaritalStatus}`}
+          />
+        </Col>
+        <Col span={12}>
+          <DescriptionItem
+            title="Email"
+            content={`${response?.person?.Email}`}
+          />
+        </Col>
+        <Col span={12}>
+          <DescriptionItem
+            title="Teléfono"
+            content={`${response?.person?.PhoneNumber}`}
           />
         </Col>
       </Row>
@@ -91,7 +129,13 @@ const EmployeeDetail = ({ id }) => {
         </Col>
         <Col span={12}>
           <DescriptionItem
-            title="Contratación"
+            title="Departamento"
+            content={`${currentDepartment?.Name}`}
+          />
+        </Col>
+        <Col span={12}>
+          <DescriptionItem
+            title="Fecha de asignación"
             content={`${response?.HireDate}`}
           />
         </Col>
