@@ -3,8 +3,18 @@ import styles from "../styles/Home.module.css";
 import Lottie from "react-lottie";
 import construction from "../public/lotties/construction.json";
 import { defaultOptions } from "../const/lottieOptions";
+import { Button } from "antd";
 
-export default function Home() {
+export async function getServerSideProps(context) {
+  // console.log("context", context);
+  // console.log("object", context.req.headers);
+  return {
+    props: { url: context.req.headers.host }, // will be passed to the page component as props
+  };
+}
+
+export default function Home({ url }) {
+  console.log("url", url);
   return (
     <div className={styles.container}>
       <Head>
@@ -14,6 +24,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>¡Bienvenido a Adventure Works Cycle!</h1>
+        <Button>Hola</Button>
         <p className={styles.description}>Sitio en construcción</p>
         <Lottie
           options={{
